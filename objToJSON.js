@@ -1,3 +1,6 @@
+/* objToJSON - v1.0
+* https://github.com/sfiluyk/obgToJSON
+* Copyright (c) 2014  Sergey Filuyk Licensed GPL */
 var fs = require('fs');
 var src = './../../../client/models/Vehicles/1/ARC170.obj';
 
