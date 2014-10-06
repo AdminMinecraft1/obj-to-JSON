@@ -2,7 +2,7 @@
 * https://github.com/sfiluyk/obgToJSON
 * Copyright (c) 2014  Sergey Filuyk Licensed GPL */
 var fs = require('fs');
-var src = './../../../client/models/Vehicles/1/ARC170.obj';
+var src = './../WebGl/client/models/Vehicles/1/justigue_league_flying_vehicle.obj';
 
 var Mesh = function Mesh() {
     this.name = '';
@@ -46,7 +46,7 @@ var objToJSON = function(src) {
                 return array;
             },
             add = function(string, name, model) {
-                var reg = new RegExp(name + '\\s.*\\r\\n', 'g');
+                var reg = new RegExp(name + '\\s.*\\n', 'g');
                 var array = string.match(reg);
                 if (array !== null)
                 {
@@ -82,6 +82,7 @@ var objToJSON = function(src) {
     path = src.match(new RegExp('\/[^\/]*$', 'g'))[0];
     name = path.replace('/', '').match(new RegExp('[^\.]\\w*'))[0];
     type = path.replace('/', '').match(new RegExp('[^\.]\\w*$', 'g'))[0];
+
 
     mesh.set('name', name);
     mesh.set('src', src.replace(path, '') + '/' + name + '.json');
