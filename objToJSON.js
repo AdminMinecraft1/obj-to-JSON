@@ -1,4 +1,5 @@
 var fs = require('fs');
+var src = './../../../client/models/Vehicles/1/ARC170.obj';
 
 var objToJSON = function(src){
 
@@ -6,16 +7,14 @@ var objToJSON = function(src){
 		v:[],
 		vt:[],
 		vn:[],
-		f:[]
+		f:[],
+                vertices:[]
 	};
 
-	var remove = function(array,regs){
+	var format = function(array,reg){
 
 		array.map(function(v0,i0){
-			regs.map(function(v1,i1){
-				array[i0] = array[i0].replace(v1,'');
-			})
-			array[i0] = array[i0].split(/\s/g);
+			array[i0] = v0.match(reg);
 		});
 
 		return array;
@@ -27,13 +26,9 @@ var objToJSON = function(src){
 		if(array !== null)
 		{		
 			model[name] = model[name]
-								.concat(remove(
+								.concat(format(
 										array,
-										[
-											new RegExp(name+'\\s','g'),
-											/\r\n/g,
-											/\s/
-										]
+										new RegExp('[^'+name+'\\s*]+[\\w\/][^\\s]*','g')
 									));
 		}
 	}
@@ -51,13 +46,26 @@ var objToJSON = function(src){
 
 	
 	})
+        
+        model.v.map(function(v0,i0){
+            v0.map(function(v1,i1){
+                if(v1.length){
+                    model.vertices.push(parseFloat(v1));
+                }
+            })
+        });
+        
+        var path = src.match(new RegExp('\/[^\/]*$','g'))[0];
+        var name =  path.replace('/','').match(new RegExp('[^\.]\\w*'))[0];
+        var type = path.replace('/','').match(new RegExp('[^\.]\\w*$','g'))[0];
+        
 
 	stream.on('end',function(){
-		fs.writeFile('./../../../3D Models/Vehicles/7/7.json',JSON.stringify(model),function(){
+		fs.writeFile(src.replace(path,'')+'/'+name+'.json',JSON.stringify(model),function(){
 
 		})
 	})
 
 }
 
-objToJSON('./../../../3D Models/Vehicles/7/ARC170.obj')
+objToJSON(src);
