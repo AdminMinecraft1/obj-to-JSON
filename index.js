@@ -1,6 +1,5 @@
-/* obj-to-JSON - v1.0
- * https://github.com/sfiluyk/obgToJSON
- * Copyright (c) 2014  Sergey Filuyk Licensed GPL */
+'use strict';
+
 var fs = require('fs');
 
 var Mesh = function Mesh() {
