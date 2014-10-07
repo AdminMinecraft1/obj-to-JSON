@@ -5,24 +5,30 @@
 
 <h2>So whats next?</h2>
 
-You like webGL or don't) your developer way faces with 3D models, 
-    so -> you need some model in -> some file format;
-    Blender,3dsMax ... this only start);
-    One of popular and easy 3D model format is .obj you can export to this format model or find already done model.
+You like may WebGL or don't), yours developer way to faces with 3D models;
 
-    So you have model, but how you say :
-        <h4>" How this help me How I can use data from, browser doesn't know anything about .obj"</h4>,
+So -> you need some model, in -> some file format;
 
-        My answer you can, you can export this .obj to JSON;
-            <h4> You say : "Ohhh this need some additional tools or around stuff need new knowledges ..."</h4>
-            <h4> I say -> You know JS and this enough</h4>
+Blender,3DSMax ... this only start of all list);
 
-            You need : 
-                        ->vertices , 
-                        ->vertices normals, 
-                        ->textures coords and so on ...
+One of popular and easy 3D models format is "*".obj,
+ you can export to this format your model or find already done model in this format.
 
-             <h3>Easy</h3>
+So you have model, you may say :
+
+<h4>" How this help me. How I can use data from, browser doesn't know anything about "*".obj"</h4>
+
+<h5>My answer you can, you can export this from "*".obj to JSON</h5>
+
+<h4> You say : "Ohhh this need some additional tools or some around stuff, need new knowledge ..."</h4>
+<h4> I say -> You know JS?! and this enough</h4>
+
+You need : 
+          ->vertices , 
+          ->vertices normals, 
+          ->textures coords and so on ...
+
+<h3>Easy</h3>
 
 <h2>How to use :</h2>
 
@@ -32,29 +38,27 @@ I think you have node and npm, if no -> not problem :
 
 open terminal :
   
-        <pre>
+        
             npm install git://github.com/sfiluyk/obj-to-JSON.git
-        </pre>
+      
  
 
-How export :
+<h3>How export</h3>
+ Add to .js file :
 
- Add to .js file;
-
-        <code>
+      
             var obj_to_JSON = reqiure('obj-to-JSON');
             var src = 'link to you .obj file'
 
             obj_to_JSON(src);
-        </code>
+       
 
 
-One of way run this .js like: 
-    
+<h3>One of way run this .js </h3>  
 Write in terminal :
-            <pre>
+          
                node (your .js file name)
-            </pre>
+         
 
 
-    <h3>Thats all -> now you have in your src folder new objName.json file , use it and enjoy</h3>
+<h3>Thats all -> now you have in your src folder new objName.json file , use it and enjoy</h3>
