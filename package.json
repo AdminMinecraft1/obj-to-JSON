@@ -3,21 +3,19 @@
   "version": "1.0",
   "description": "Module provide export .obj file to .json files, usefull for webGL developers",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sfiluyk/objToJSON.git"
+    "url": "https://github.com/sfiluyk/obj-to-JSON.git"
   },
   "keywords": [
     "obj",
     "json",
     "webGL"
   ],
+  "readmeFilename": "README.md",
   "author": "Sergey Filyuk <sergey.filuyk@gmail.com>",
   "license": "GPL",
   "bugs": {
-    "url": "https://github.com/sfiluyk/objToJSON"
+    "url": "https://github.com/sfiluyk/obj-to-JSON"
   }
 }
