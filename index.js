@@ -1,8 +1,7 @@
-/* objToJSON - v1.0
-* https://github.com/sfiluyk/obgToJSON
-* Copyright (c) 2014  Sergey Filuyk Licensed GPL */
+/* obj-to-JSON - v1.0
+ * https://github.com/sfiluyk/obgToJSON
+ * Copyright (c) 2014  Sergey Filuyk Licensed GPL */
 var fs = require('fs');
-var src = './../WebGl/client/models/Vehicles/7/ARC170.obj';
 
 var Mesh = function Mesh() {
     this.name = '';
@@ -30,7 +29,7 @@ Mesh.prototype.set = function(a, b) {
     this[a] = b;
 }
 
-var objToJSON = function(src) {
+var main = function(src) {
 
     var path = src.match(new RegExp('\/[^\/]*$', 'g'))[0],
             name = path.replace('/', '').match(new RegExp('[^\.]\\w*'))[0],
@@ -57,7 +56,7 @@ var objToJSON = function(src) {
                                     ));
                 }
             };
-            
+
 
 
 
@@ -94,4 +93,7 @@ var objToJSON = function(src) {
 
 }
 
-objToJSON(src);
+
+module.exports = {
+    export: main
+};
