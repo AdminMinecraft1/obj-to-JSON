@@ -1,6 +1,6 @@
 {
   "name": "obj-to-JSON",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "Module provide export .obj file to .json files, usefull for webGL developers",
   "main": "index.js",
   "repository": {
@@ -16,6 +16,6 @@
   "author": "Sergey Filyuk <sergey.filuyk@gmail.com>",
   "license": "GPL",
   "bugs": {
-    "url": "https://github.com/sfiluyk/obj-to-JSON"
+    "url": "https://github.com/sfiluyk/obj-to-JSON/issues"
   }
 }
