@@ -50,7 +50,7 @@ open terminal :
             var obj_to_JSON = reqiure('obj-to-JSON');
             var src = 'link to you .obj file'
 
-            obj_to_JSON(src);
+            obj_to_JSON.export(src);
        
 
 

@@ -10,6 +10,11 @@ var Mesh = function Mesh() {
     this.vt = [];
     this.f = [];
     this.vertices = [];
+    this.indices = {
+        v: [],
+        vn: [],
+        vt: []
+    }
 
     return this
 }
@@ -38,16 +43,21 @@ var main = function(src) {
             format = function(array, reg) {
 
                 array.map(function(v0, i0) {
+                    if(v0.match(reg) === null){
+                        //console.log(v0)
+                    }
                     array[i0] = v0.match(reg);
                 });
 
                 return array;
             },
             add = function(string, name, model) {
-                var reg = new RegExp(name + '\\s.*\\r{0,1}\\n{0,1}', 'g');
+                var reg = new RegExp(name + '{1}\\s+[-]?\\d{1,}.*\\r{0,}\\n{0,}', 'g');
                 var array = string.match(reg);
+               
                 if (array !== null)
                 {
+                    console.log(array)
                     model[name] = model[name]
                             .concat(format(
                                     array,
@@ -70,13 +80,7 @@ var main = function(src) {
 
     })
 
-    mesh.get('v').map(function(v0, i0) {
-        v0.map(function(v1, i1) {
-            if (v1.length) {
-                mesh.get('vertices').push(parseFloat(v1));
-            }
-        })
-    });
+
 
 
 
@@ -85,6 +89,43 @@ var main = function(src) {
 
 
     stream.on('end', function() {
+
+        mesh.get('v').map(function(v0, i0) {
+            v0.map(function(v1, i1) {
+                if (v1.length) {
+                    mesh.get('vertices').push(parseFloat(v1));
+                }
+            });
+        });
+
+
+        mesh.get('f').map(function(p0, i0) {
+            var length = 3,
+                    vidx = mesh.get('indices').v,
+                    vnidx = mesh.get('indices').vn,
+                    vtidx = mesh.get('indices').vt,
+                    indices;
+
+            if (p0.length < length)
+            {
+                length = p0.length;
+            }
+
+            for (var i = 0; i < length; i++)
+            {
+                indices = p0[i] ? p0[i].split('/') : [];
+
+                indices[0] && vidx.push(parseInt(indices[0]));
+                indices[1] && vtidx.push(parseInt(indices[1]));
+                indices[2] && vnidx.push(parseInt(indices[2]));
+            }
+
+
+
+
+
+        })
+
         fs.writeFile(mesh.get('src'), JSON.stringify(mesh), function() {
 
         })
