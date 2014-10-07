@@ -31,32 +31,30 @@ I think you have node and npm, if no -> not problem :
     (node this is powerful tool if you don't use it till this moment try you will enjoy)
 
 open terminal :
-   <div class="highlight highlight-js">
+  
         <pre>
             npm install git://github.com/sfiluyk/obj-to-JSON.git
         </pre>
-    </div>
+ 
 
 How export :
 
-    add to .js file;
+ Add to .js file;
 
-    <div class="highlight highlight-js">
-        <pre>
+        <code>
             var obj_to_JSON = reqiure('obj-to-JSON');
             var src = 'link to you .obj file'
 
             obj_to_JSON(src);
+        </code>
 
-        </pre>
-    </div>
 
-    one of way run this .js like: 
+One of way run this .js like: 
     
-    <div class="highlight highlight-js">
-           <pre>
+Write in terminal :
+            <pre>
                node (your .js file name)
-           </pre>
-   </div>
+            </pre>
+
 
     <h3>Thats all -> now you have in your src folder new objName.json file , use it and enjoy</h3>
