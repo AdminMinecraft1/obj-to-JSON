@@ -52,12 +52,16 @@ var main = function(src) {
             }
         },
         createBuffer = function(mesh, array, indices, buffer) {
-            mesh.VBOs[indices].map(function(v0, i0) {
-                mesh[array][mesh.VBOs[indices][i0] - 1].map(function(v1, i1) {
-                    mesh.VBOs[buffer].push(parseFloat(v1))
-                })
+            mesh.VBOs[indices] = mesh.VBOs[indices].map(function(v, i) {
+                return v - 1;
             });
-        };
+
+            mesh[array].map(function(v0) {
+                v0.map(function(v1) {
+                    mesh.VBOs[buffer].push(parseFloat(v1));
+                });
+            });
+        }
 
     fs.readFile(src, function(error, data) {
 
@@ -90,12 +94,16 @@ var main = function(src) {
         createBuffer(mesh, 'vn', 'normalIndicesBuffer', 'vertexNormalBuffer');
         createBuffer(mesh, 'vt', 'textureIndicesBuffer', 'vertexTextureBuffer');
 
+       
 
         mesh.name = name;
         mesh.src = src.replace(path, '') + '/' + name + '.json';
 
 
         fs.writeFile(mesh.src, JSON.stringify(mesh), function() {});
+
+         console.log('Mesh exported to '+mesh.src);
+
     });
 
 
