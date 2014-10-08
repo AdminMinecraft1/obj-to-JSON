@@ -10,10 +10,13 @@ var Mesh = function Mesh() {
     this.vt = [];
     this.f = [];
     this.vertices = [];
-    this.indices = {
-        v: [],
-        vn: [],
-        vt: []
+    this.VBOs ={
+        vertexBuffer:[],
+        vertexNormalBuffer:[],
+        vertexTextureBuffer:[],
+        vertexIndicesBuffer:[],
+        textureIndicesBuffer:[],
+        normalIndicesBuffer:[]
     }
 
     return this
@@ -43,10 +46,7 @@ var main = function(src) {
             format = function(array, reg) {
 
                 array.map(function(v0, i0) {
-                    if(v0.match(reg) === null){
-                        //console.log(v0)
-                    }
-                    array[i0] = v0.match(reg);
+                    array[i0] = v0.match(reg)[0].split(/\s/g);  
                 });
 
                 return array;
@@ -57,11 +57,10 @@ var main = function(src) {
                
                 if (array !== null)
                 {
-                    console.log(array)
                     model[name] = model[name]
                             .concat(format(
                                     array,
-                                    new RegExp('[^' + name + '\\s*]+[\\w\/][^\\s]*', 'g')
+                                    new RegExp('[^' + name + '\\s*][-]?.*[^\\s*]', 'g')
                                     ));
                 }
             };
@@ -90,20 +89,11 @@ var main = function(src) {
 
     stream.on('end', function() {
 
-        mesh.get('v').map(function(v0, i0) {
-            v0.map(function(v1, i1) {
-                if (v1.length) {
-                    mesh.get('vertices').push(parseFloat(v1));
-                }
-            });
-        });
-
-
         mesh.get('f').map(function(p0, i0) {
             var length = 3,
-                    vidx = mesh.get('indices').v,
-                    vnidx = mesh.get('indices').vn,
-                    vtidx = mesh.get('indices').vt,
+                    vidx = mesh.get('VBOs').vertexIndicesBuffer,
+                    vnidx = mesh.get('VBOs').vertexNormalBuffer,
+                    vtidx = mesh.get('VBOs').vertexTextureBuffer,
                     indices;
 
             if (p0.length < length)
@@ -120,11 +110,13 @@ var main = function(src) {
                 indices[2] && vnidx.push(parseInt(indices[2]));
             }
 
-
-
-
-
         })
+
+         mesh.get('VBOs').vertexIndicesBuffer.map(function(v0,i0){
+                mesh.get('v')[v0-1] && mesh.get('v')[v0-1].map(function(v1,i1){
+                    mesh.get('VBOs').vertexBuffer.push(parseFloat(v1));
+                });               
+             });
 
         fs.writeFile(mesh.get('src'), JSON.stringify(mesh), function() {
 
