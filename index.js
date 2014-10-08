@@ -9,119 +9,103 @@ var Mesh = function Mesh() {
     this.vn = [];
     this.vt = [];
     this.f = [];
-    this.vertices = [];
-    this.VBOs ={
-        vertexBuffer:[],
-        vertexNormalBuffer:[],
-        vertexTextureBuffer:[],
-        vertexIndicesBuffer:[],
-        textureIndicesBuffer:[],
-        normalIndicesBuffer:[]
+    this.origin = [];
+    this.VBOs = {
+        vertexBuffer: [],
+        vertexNormalBuffer: [],
+        vertexTextureBuffer: [],
+        vertexIndicesBuffer: [],
+        textureIndicesBuffer: [],
+        normalIndicesBuffer: []
     }
 
-    return this
-}
-
-Mesh.prototype.get = function(a) {
-    if (!a) {
-        throw console.error('None such property')
-    }
-    return this[a];
-}
-
-Mesh.prototype.set = function(a, b) {
-    if (!a) {
-        throw console.error('None such property')
-    }
-    this[a] = b;
+    return this;
 }
 
 var main = function(src) {
 
     var path = src.match(new RegExp('\/[^\/]*$', 'g'))[0],
-            name = path.replace('/', '').match(new RegExp('[^\.]\\w*'))[0],
-            type = path.replace('/', '').match(new RegExp('[^\.]\\w*$', 'g'))[0],
-            mesh = new Mesh(),
-            stream = fs.createReadStream(src),
-            format = function(array, reg) {
+        name = path.replace('/', '').match(new RegExp('[^\.]\\w*'))[0],
+        type = path.replace('/', '').match(new RegExp('[^\.]\\w*$', 'g'))[0],
+        mesh = new Mesh(),
+        format = function(array, reg) {
 
-                array.map(function(v0, i0) {
-                    array[i0] = v0.match(reg)[0].split(/\s/g);  
-                });
+            array.map(function(v0, i0) {
+                array[i0] = v0
+                    .match(reg)[0]
+                    .split(/\s/g);
 
-                return array;
-            },
-            add = function(string, name, model) {
-                var reg = new RegExp(name + '{1}\\s+[-]?\\d{1,}.*\\r{0,}\\n{0,}', 'g');
-                var array = string.match(reg);
-               
-                if (array !== null)
-                {
-                    model[name] = model[name]
-                            .concat(format(
-                                    array,
-                                    new RegExp('[^' + name + '\\s*][-]?.*[^\\s*]', 'g')
-                                    ));
-                }
+            });
+
+            return array;
+        },
+        add = function(string, name, model) {
+            var reg = new RegExp(name + '{1}\\s+[-]?\\d{1,}.*\\r{0,}\\n{0,}', 'g');
+            var array = string.match(reg);
+
+            if (array !== null) {
+                model[name] = model[name]
+                    .concat(format(
+                        array,
+                        new RegExp('[^' + name + '\\s*][-]?.*[^\\s*]', 'g')
+                    ));
+            }
+        },
+        createBuffer = function(mesh, array, buffer) {
+
+            var length = mesh[array].length;
+
+            for (var i = 0; i < length; i++) {
+                mesh.VBOs[buffer] =
+                    mesh
+                    .VBOs[buffer]
+                    .concat(mesh[array][i]);
             };
 
+            mesh.VBOs[buffer] =
+                mesh
+                .VBOs[buffer]
+                .map(function(v, i) {
+                    return parseFloat(v);
+                })
 
 
+        };
 
-    stream.on('data', function(line) {
-        line = line.toString();
+    fs.readFile(src, function(error, data) {
+        data = data.toString();
 
-        add(line, 'v', mesh);
-        add(line, 'vt', mesh);
-        add(line, 'vn', mesh);
-        add(line, 'f', mesh);
+        add(data, 'v', mesh);
+        add(data, 'vt', mesh);
+        add(data, 'vn', mesh);
+        add(data, 'f', mesh);
 
+        mesh.f.map(function(f0, i0) {
+            var length = f0.length < 3 ? f0.length : 3,
+                vidx = mesh.VBOs.vertexIndicesBuffer,
+                vnidx = mesh.VBOs.normalIndicesBuffer,
+                vtidx = mesh.VBOs.textureIndicesBuffer,
+                indices;
 
-    })
-
-
-
-
-
-    mesh.set('name', name);
-    mesh.set('src', src.replace(path, '') + '/' + name + '.json');
-
-
-    stream.on('end', function() {
-
-        mesh.get('f').map(function(p0, i0) {
-            var length = 3,
-                    vidx = mesh.get('VBOs').vertexIndicesBuffer,
-                    vnidx = mesh.get('VBOs').vertexNormalBuffer,
-                    vtidx = mesh.get('VBOs').vertexTextureBuffer,
-                    indices;
-
-            if (p0.length < length)
-            {
-                length = p0.length;
-            }
-
-            for (var i = 0; i < length; i++)
-            {
-                indices = p0[i] ? p0[i].split('/') : [];
-
+            for (var i = 0; i < length; i++) {
+                indices = f0[i] ? f0[i].split('/') : [];
                 indices[0] && vidx.push(parseInt(indices[0]));
                 indices[1] && vtidx.push(parseInt(indices[1]));
                 indices[2] && vnidx.push(parseInt(indices[2]));
             }
 
-        })
+        });
 
-         mesh.get('VBOs').vertexIndicesBuffer.map(function(v0,i0){
-                mesh.get('v')[v0-1] && mesh.get('v')[v0-1].map(function(v1,i1){
-                    mesh.get('VBOs').vertexBuffer.push(parseFloat(v1));
-                });               
-             });
+        createBuffer(mesh, 'v', 'vertexBuffer');
+        createBuffer(mesh, 'vn', 'vertexNormalBuffer');
+        createBuffer(mesh, 'vt', 'vertexTextureBuffer');
 
-        fs.writeFile(mesh.get('src'), JSON.stringify(mesh), function() {
+        mesh.name = name;
+        mesh.src = src.replace(path, '') + '/' + name + '.json';
 
-        })
-    })
+        fs.writeFile(mesh.src, JSON.stringify(mesh), function() {});
+    });
+
 
 }
 
