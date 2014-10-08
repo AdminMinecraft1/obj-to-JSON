@@ -9,7 +9,6 @@ var Mesh = function Mesh() {
     this.vn = [];
     this.vt = [];
     this.f = [];
-    this.origin = [];
     this.VBOs = {
         vertexBuffer: [],
         vertexNormalBuffer: [],
@@ -17,7 +16,8 @@ var Mesh = function Mesh() {
         vertexIndicesBuffer: [],
         textureIndicesBuffer: [],
         normalIndicesBuffer: []
-    }
+    };
+
 
     return this;
 }
@@ -51,28 +51,16 @@ var main = function(src) {
                     ));
             }
         },
-        createBuffer = function(mesh, array, buffer) {
-
-            var length = mesh[array].length;
-
-            for (var i = 0; i < length; i++) {
-                mesh.VBOs[buffer] =
-                    mesh
-                    .VBOs[buffer]
-                    .concat(mesh[array][i]);
-            };
-
-            mesh.VBOs[buffer] =
-                mesh
-                .VBOs[buffer]
-                .map(function(v, i) {
-                    return parseFloat(v);
+        createBuffer = function(mesh, array, indices, buffer) {
+            mesh.VBOs[indices].map(function(v0, i0) {
+                mesh[array][mesh.VBOs[indices][i0] - 1].map(function(v1, i1) {
+                    mesh.VBOs[buffer].push(parseFloat(v1))
                 })
-
-
+            });
         };
 
     fs.readFile(src, function(error, data) {
+
         data = data.toString();
 
         add(data, 'v', mesh);
@@ -96,12 +84,16 @@ var main = function(src) {
 
         });
 
-        createBuffer(mesh, 'v', 'vertexBuffer');
-        createBuffer(mesh, 'vn', 'vertexNormalBuffer');
-        createBuffer(mesh, 'vt', 'vertexTextureBuffer');
+
+
+        createBuffer(mesh, 'v', 'vertexIndicesBuffer', 'vertexBuffer');
+        createBuffer(mesh, 'vn', 'normalIndicesBuffer', 'vertexNormalBuffer');
+        createBuffer(mesh, 'vt', 'textureIndicesBuffer', 'vertexTextureBuffer');
+
 
         mesh.name = name;
         mesh.src = src.replace(path, '') + '/' + name + '.json';
+
 
         fs.writeFile(mesh.src, JSON.stringify(mesh), function() {});
     });
