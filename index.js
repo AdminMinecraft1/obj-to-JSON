@@ -56,21 +56,34 @@ var main = function(src) {
                     return parseInt(v1) - 1;
                 });
 
-                mesh.v[idx[0]].map(function(v1) {
-                    mesh.VBOs.vertexBuffer.push(parseFloat(v1));
-                })
+                if (mesh.v[idx[0]]) {
+                    mesh.v[idx[0]].map(function(v1) {
+                        mesh.VBOs.vertexBuffer.push(parseFloat(v1));
+                    });
+                    mesh.vItemSize = mesh.v[0].length;
+                }
 
-                mesh.vt[idx[1]].map(function(v1, i1) {
-                    mesh.VBOs.textureBuffer.push(parseFloat(v1));
-                })
+                if (mesh.vt[idx[1]]) {
 
-                mesh.vn[idx[2]].map(function(v1) {
-                    mesh.VBOs.normalBuffer.push(parseFloat(v1));
-                })
+                    mesh.vt[idx[1]].map(function(v1, i1) {
+                        mesh.VBOs.textureBuffer.push(parseFloat(v1));
+                    });
 
-                mesh.vItemSize = mesh.v[0].length;
-                mesh.vtItemSize = mesh.vt[0].length;
-                mesh.vnItemSize = mesh.vn[0].length;
+                    mesh.vtItemSize = mesh.vt[0].length;
+
+                }
+
+
+                if (mesh.vn[idx[2]]) {
+                    mesh.vn[idx[2]].map(function(v1) {
+                        mesh.VBOs.normalBuffer.push(parseFloat(v1));
+                    });
+
+                    mesh.vnItemSize = mesh.vn[0].length;
+                }
+
+
+
             });
 
         },
