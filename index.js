@@ -11,12 +11,11 @@ var Mesh = function Mesh() {
     this.f = [];
     this.VBOs = {
         vertexBuffer: [],
-        vertexNormalBuffer: [],
-        vertexTextureBuffer: [],
+        texBuffer:[],
+        normalBuffer:[],
         vertexIndicesBuffer: [],
-        textureIndicesBuffer: [],
-        normalIndicesBuffer: []
     };
+    this.polygons = [];
 
 
     return this;
@@ -51,24 +50,50 @@ var main = function(src) {
                     ));
             }
         },
-        createBuffer = function(mesh, array, indices, buffer, faces) {
-            mesh.VBOs[indices] = mesh.VBOs[indices].map(function(v0, i0) {
-                if (faces) {
-                    mesh[array][v0 - 1].map(function(v2, i2) {
-                        mesh.VBOs[buffer].push(parseFloat(v2));
-                    })
-                }
-                return v0 - 1;
+        createBuffers = function() {
+            mesh.polygons.map(function(v0) {
+                var idx = v0.split('/').map(function(v1,i1){
+                    return parseInt(v1);
+                });
+
+                mesh.v[idx[0]-1].map(function(v1) {
+                    mesh.VBOs.vertexBuffer.push(parseFloat(v1));
+                })
+
+                mesh.vt[idx[1]-1].map(function(v1,i1) {
+                    mesh.VBOs.texBuffer.push(parseFloat(v1));
+                })
+
+                mesh.vn[idx[2]-1].map(function(v1) {
+                    mesh.VBOs.normalBuffer.push(parseFloat(v1));
+                })
+
+            })
+        },
+        sampleBuffers = function() {
+            var idx = 0,
+                keys = {},
+                idx = 0;
+
+            mesh.f.map(function(v0, i0) {
+                v0.map(function(v1, i1) {
+                    if (!keys[v1]) {
+                        keys[v1] = idx;
+                        idx++;
+                    }
+                })
             });
 
 
-            if (!faces) {
-                mesh[array].map(function(v0) {
-                    v0.map(function(v1) {
-                        mesh.VBOs[buffer].push(parseFloat(v1));
-                    });
+            mesh.f.map(function(v0, i0) {
+                v0.map(function(v1, i1) {
+                    mesh.VBOs.vertexIndicesBuffer.push(keys[v1]-1);
                 });
-            };
+            });
+
+            for (var key in keys) {
+                mesh.polygons.push(key);
+            }
         }
 
     fs.readFile(src, function(error, data) {
@@ -80,28 +105,8 @@ var main = function(src) {
         add(data, 'vn', mesh);
         add(data, 'f', mesh);
 
-        mesh.f.map(function(f0, i0) {
-            var length = f0.length < 3 ? f0.length : 3,
-                vidx = mesh.VBOs.vertexIndicesBuffer,
-                vnidx = mesh.VBOs.normalIndicesBuffer,
-                vtidx = mesh.VBOs.textureIndicesBuffer,
-                indices;
-
-            for (var i = 0; i < length; i++) {
-                indices = f0[i] ? f0[i].split('/') : [];
-                indices[0] && vidx.push(parseInt(indices[0]));
-                indices[1] && vtidx.push(parseInt(indices[1]));
-                indices[2] && vnidx.push(parseInt(indices[2]));
-            }
-
-        });
-
-
-
-        createBuffer(mesh, 'v', 'vertexIndicesBuffer', 'vertexBuffer');
-        createBuffer(mesh, 'vn', 'normalIndicesBuffer', 'vertexNormalBuffer', true);
-        createBuffer(mesh, 'vt', 'textureIndicesBuffer', 'vertexTextureBuffer', true);
-
+        sampleBuffers();
+        createBuffers();
 
 
         mesh.name = name;
