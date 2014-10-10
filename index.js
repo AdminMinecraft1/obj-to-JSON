@@ -11,8 +11,8 @@ var Mesh = function Mesh() {
     this.f = [];
     this.VBOs = {
         vertexBuffer: [],
-        texBuffer:[],
-        normalBuffer:[],
+        textureBuffer: [],
+        normalBuffer: [],
         vertexIndicesBuffer: [],
     };
     this.polygons = [];
@@ -52,23 +52,27 @@ var main = function(src) {
         },
         createBuffers = function() {
             mesh.polygons.map(function(v0) {
-                var idx = v0.split('/').map(function(v1,i1){
-                    return parseInt(v1);
+                var idx = v0.split('/').map(function(v1, i1) {
+                    return parseInt(v1) - 1;
                 });
 
-                mesh.v[idx[0]-1].map(function(v1) {
+                mesh.v[idx[0]].map(function(v1) {
                     mesh.VBOs.vertexBuffer.push(parseFloat(v1));
                 })
 
-                mesh.vt[idx[1]-1].map(function(v1,i1) {
-                    mesh.VBOs.texBuffer.push(parseFloat(v1));
+                mesh.vt[idx[1]].map(function(v1, i1) {
+                    mesh.VBOs.textureBuffer.push(parseFloat(v1));
                 })
 
-                mesh.vn[idx[2]-1].map(function(v1) {
+                mesh.vn[idx[2]].map(function(v1) {
                     mesh.VBOs.normalBuffer.push(parseFloat(v1));
                 })
 
-            })
+                mesh.vItemSize = mesh.v[0].length;
+                mesh.vtItemSize = mesh.vt[0].length;
+                mesh.vnItemSize = mesh.vn[0].length;
+            });
+
         },
         sampleBuffers = function() {
             var idx = 0,
@@ -77,7 +81,7 @@ var main = function(src) {
 
             mesh.f.map(function(v0, i0) {
                 v0.map(function(v1, i1) {
-                    if (!keys[v1]) {
+                    if (keys[v1] === undefined) {
                         keys[v1] = idx;
                         idx++;
                     }
@@ -87,13 +91,15 @@ var main = function(src) {
 
             mesh.f.map(function(v0, i0) {
                 v0.map(function(v1, i1) {
-                    mesh.VBOs.vertexIndicesBuffer.push(keys[v1]-1);
+                    mesh.VBOs.vertexIndicesBuffer.push(keys[v1]);
                 });
             });
 
             for (var key in keys) {
                 mesh.polygons.push(key);
             }
+
+            mesh.keys = keys;
         }
 
     fs.readFile(src, function(error, data) {
