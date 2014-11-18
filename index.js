@@ -21,15 +21,15 @@ var Mesh = function Mesh() {
     return this;
 }
 
-var main = function(src) {
+var main = function (src) {
 
     var path = src.match(new RegExp('\/[^\/]*$', 'g'))[0],
         name = path.replace('/', '').match(new RegExp('[^\.]\\w*'))[0],
         type = path.replace('/', '').match(new RegExp('[^\.]\\w*$', 'g'))[0],
         mesh = new Mesh(),
-        format = function(array, reg) {
+        format = function (array, reg) {
 
-            array.map(function(v0, i0) {
+            array.map(function (v0, i0) {
                 array[i0] = v0
                     .match(reg)[0]
                     .split(/\s/g);
@@ -38,7 +38,7 @@ var main = function(src) {
 
             return array;
         },
-        add = function(string, name, model) {
+        add = function (string, name, model) {
             var reg = new RegExp(name + '{1}\\s+[-]?\\d{1,}.*\\r{0,}\\n{0,}', 'g');
             var array = string.match(reg);
 
@@ -50,72 +50,64 @@ var main = function(src) {
                     ));
             }
         },
-        createBuffers = function() {
-            mesh.polygons.map(function(v0) {
-                var idx = v0.split('/').map(function(v1, i1) {
-                    return parseInt(v1) - 1;
-                });
+        createBuffers = function () {
 
-                if (mesh.v[idx[0]]) {
-                    mesh.v[idx[0]].map(function(v1) {
-                        mesh.VBOs.vertexBuffer.push(parseFloat(v1));
-                    });
-                    mesh.vItemSize = mesh.v[0].length;
-                }
-
-                if (mesh.vt[idx[1]]) {
-
-                    mesh.vt[idx[1]].map(function(v1, i1) {
-                        mesh.VBOs.textureBuffer.push(parseFloat(v1));
-                    });
-
-                    mesh.vtItemSize = mesh.vt[0].length;
-
-                }
-
-
-                if (mesh.vn[idx[2]]) {
-                    mesh.vn[idx[2]].map(function(v1) {
-                        mesh.VBOs.normalBuffer.push(parseFloat(v1));
-                    });
-
-                    mesh.vnItemSize = mesh.vn[0].length;
-                }
-
-
-
-            });
 
         },
-        sampleBuffers = function() {
+        clearMemory = function () {
+            delete mesh.f;
+            delete mesh.v;
+            delete mesh.vt;
+            delete mesh.vn;
+            delete mesh.polygons;
+        },
+        sampleBuffers = function () {
             var idx = 0,
                 keys = {},
-                idx = 0;
+                uv = null,
+                u = null,
+                v = null,
+                key = null;
 
-            mesh.f.map(function(v0, i0) {
-                v0.map(function(v1, i1) {
-                    if (keys[v1] === undefined) {
-                        keys[v1] = idx;
+            mesh.f.map(function (v0, i0) {
+
+                v0.map(function (v1, i1) {
+                    uv = v1.split(/\/[^\/]*$/)[0].split('/');
+                    v = mesh.v[uv[0] - 1].join();
+                    u = mesh.vt[uv[1] - 1].join();
+                    key = u + v;
+
+                    if (!(key in keys)) {
+                        keys[key] = idx;
+                        mesh.VBOs.vertexIndicesBuffer.push(idx);
+
+                        mesh.v[uv[0] - 1].map(function (v2) {
+                            mesh.VBOs.vertexBuffer.push(parseFloat(v2));
+                        });
+
+                        mesh.vt[uv[1] - 1].map(function (v1) {
+                            mesh.VBOs.textureBuffer.push(parseFloat(v1));
+                        });
+
+                        mesh.vn[v1.split('/')[2] - 1].map(function (v2) {
+                            mesh.VBOs.normalBuffer.push(parseFloat(v2));
+                        });
+
                         idx++;
+                    } else {
+                        mesh.VBOs.vertexIndicesBuffer.push(keys[key]);
                     }
                 })
+
             });
 
+            mesh.vItemSize = 3;
+            mesh.vtItemSize = 2;
+            mesh.vnItemSize = 3;
 
-            mesh.f.map(function(v0, i0) {
-                v0.map(function(v1, i1) {
-                    mesh.VBOs.vertexIndicesBuffer.push(keys[v1]);
-                });
-            });
-
-            for (var key in keys) {
-                mesh.polygons.push(key);
-            }
-
-            mesh.keys = keys;
         }
 
-    fs.readFile(src, function(error, data) {
+    fs.readFile(src, function (error, data) {
 
         data = data.toString();
 
@@ -126,13 +118,15 @@ var main = function(src) {
 
         sampleBuffers();
         createBuffers();
+        clearMemory();
 
 
         mesh.name = name;
         mesh.src = src.replace(path, '') + '/' + name + '.json';
 
 
-        fs.writeFile(mesh.src, JSON.stringify(mesh), function() {});
+        fs.writeFile(mesh.src, JSON.stringify(mesh), function () {
+        });
 
         console.log('Mesh exported to ' + mesh.src);
 
