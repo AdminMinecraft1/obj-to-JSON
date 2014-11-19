@@ -139,7 +139,7 @@ var main = function(src) {
                 normals.push([]);
             }
 
-            if (line.indexOf('usemtl') === 0) {
+            if (line.indexOf('usemtl ') === 0) {
                 materials.push({
                     name: line.split(/usemtl\s/)[1],
                     type: 'material'
