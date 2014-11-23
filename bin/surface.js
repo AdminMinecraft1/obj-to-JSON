@@ -84,34 +84,44 @@ Surface.prototype.split = function() {
 
         var surface = new Surface(this.name);
 
+        var keys = {};
 
+        var new_i = 0;
 
         for (var j = i * this.MAX_INDICES; j < ((i + 1) * this.MAX_INDICES); j++) {
 
 
-            var old_i = this.VBOs.vertexIndicesBuffer[j];
-
-            var new_i = this.MAX_INDICES < old_i ? old_i / count : old_i;
+            var key = this.VBOs.vertexIndicesBuffer[j];
 
 
-            surface.VBOs.vertexIndicesBuffer.push(new_i);
+            if (!(key in keys)) {
 
-            for (var v = 0; v < this.VERTEX_SIZE; v++) {
-                surface
-                    .VBOs
-                    .vertexBuffer[new_i * this.VERTEX_SIZE + v] = this.VBOs.vertexBuffer[old_i * this.VERTEX_SIZE + v];
-            }
+                keys[key] = new_i;
 
-            for (var vt = 0; vt < this.VERTEX_TEXTURE_SIZE; vt++) {
-                surface
-                    .VBOs
-                    .textureBuffer[new_i * this.VERTEX_TEXTURE_SIZE + vt] = this.VBOs.textureBuffer[old_i * this.VERTEX_TEXTURE_SIZE + vt];
-            }
+                surface.VBOs.vertexIndicesBuffer.push(new_i);
 
-            for (var vn = 0; vn < this.VERTEX_NORMAL_SIZE; vn++) {
-                surface
-                    .VBOs
-                    .normalBuffer[new_i * this.VERTEX_NORMAL_SIZE + vn] = this.VBOs.normalBuffer[old_i * this.VERTEX_NORMAL_SIZE + vn];
+                for (var v = 0; v < this.VERTEX_SIZE; v++) {
+                    surface
+                        .VBOs
+                        .vertexBuffer.push(this.VBOs.vertexBuffer[key * this.VERTEX_SIZE + v]);
+                }
+
+                for (var vt = 0; vt < this.VERTEX_TEXTURE_SIZE; vt++) {
+                    surface
+                        .VBOs
+                        .textureBuffer.push(this.VBOs.textureBuffer[key * this.VERTEX_TEXTURE_SIZE + vt]);
+                }
+
+                for (var vn = 0; vn < this.VERTEX_NORMAL_SIZE; vn++) {
+                    surface
+                        .VBOs
+                        .normalBuffer.push(this.VBOs.normalBuffer[key * this.VERTEX_NORMAL_SIZE + vn]);
+                }
+
+                new_i++;
+
+            } else {
+                surface.VBOs.vertexIndicesBuffer.push(keys[key]);
             }
 
         }
@@ -122,35 +132,44 @@ Surface.prototype.split = function() {
     if (remain) {
 
         var surface = new Surface(this.name);
+        var keys = {};
 
-
+        var new_i = 0;
 
         for (var j = length - remain; j < length; j++) {
 
 
-            var old_i = this.VBOs.vertexIndicesBuffer[j];
-
-            var new_i = this.MAX_INDICES < old_i ? old_i / count : old_i;
+            var key = this.VBOs.vertexIndicesBuffer[j];
 
 
-            surface.VBOs.vertexIndicesBuffer.push(new_i);
+            if (!(key in keys)) {
 
-            for (var v = 0; v < this.VERTEX_SIZE; v++) {
-                surface
-                    .VBOs
-                    .vertexBuffer[new_i * this.VERTEX_SIZE + v] = this.VBOs.vertexBuffer[old_i * this.VERTEX_SIZE + v];
-            }
+                keys[key] = new_i;
 
-            for (var vt = 0; vt < this.VERTEX_TEXTURE_SIZE; vt++) {
-                surface
-                    .VBOs
-                    .textureBuffer[new_i * this.VERTEX_TEXTURE_SIZE + vt] = this.VBOs.textureBuffer[old_i * this.VERTEX_TEXTURE_SIZE + vt];
-            }
+                surface.VBOs.vertexIndicesBuffer.push(new_i);
 
-            for (var vn = 0; vn < this.VERTEX_NORMAL_SIZE; vn++) {
-                surface
-                    .VBOs
-                    .normalBuffer[new_i * this.VERTEX_NORMAL_SIZE + vn] = this.VBOs.normalBuffer[old_i * this.VERTEX_NORMAL_SIZE + vn];
+                for (var v = 0; v < this.VERTEX_SIZE; v++) {
+                    surface
+                        .VBOs
+                        .vertexBuffer.push(this.VBOs.vertexBuffer[key * this.VERTEX_SIZE + v]);
+                }
+
+                for (var vt = 0; vt < this.VERTEX_TEXTURE_SIZE; vt++) {
+                    surface
+                        .VBOs
+                        .textureBuffer.push(this.VBOs.textureBuffer[key * this.VERTEX_TEXTURE_SIZE + vt]);
+                }
+
+                for (var vn = 0; vn < this.VERTEX_NORMAL_SIZE; vn++) {
+                    surface
+                        .VBOs
+                        .normalBuffer.push(this.VBOs.normalBuffer[key * this.VERTEX_NORMAL_SIZE + vn]);
+                }
+
+                new_i++;
+
+            } else {
+                surface.VBOs.vertexIndicesBuffer.push(keys[key]);
             }
 
         }
