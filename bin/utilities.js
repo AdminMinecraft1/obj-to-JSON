@@ -25,3 +25,7 @@ String.prototype.isMaterial = function () {
 Array.prototype.last = function () {
     return this[this.length - 1];
 }
+
+Array.prototype.max = function () {
+    return Math.max.apply(this,this);
+}
