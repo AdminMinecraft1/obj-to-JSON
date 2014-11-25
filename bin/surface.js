@@ -10,7 +10,7 @@ var Surface = function Surface(name) {
     this.VERTEX_SIZE = 3;
     this.VERTEX_TEXTURE_SIZE = 2;
     this.VERTEX_NORMAL_SIZE = 3;
-    this.MAX_INDICES = 65535;
+    this.MAX_INDICES = 5535;
 }
 
 Surface.prototype.addFace = function(a) {
@@ -71,123 +71,6 @@ Surface.prototype.getVerticesTexture = function(a) {
     this.faces.push(a);
 }
 
-Surface.prototype.split = function() {
-
-    var surfaces = [],
-        length = this.VBOs.vertexIndicesBuffer.length,
-        remain = length % this.MAX_INDICES,
-        count = (length - remain) / this.MAX_INDICES;
-
-
-
-    for (var i = 0; i < count; i += this.MAX_INDICES) {
-
-        var surface = new Surface(this.name);
-
-        var keys = {};
-
-        var new_i = 0;
-
-        for (var j = i * this.MAX_INDICES; j < ((i + 1) * this.MAX_INDICES); j++) {
-
-
-            var key = this.VBOs.vertexIndicesBuffer[j];
-
-
-            if (!(key in keys)) {
-
-                keys[key] = new_i;
-
-                surface.VBOs.vertexIndicesBuffer.push(new_i);
-
-                for (var v = 0; v < this.VERTEX_SIZE; v++) {
-                    surface
-                        .VBOs
-                        .vertexBuffer.push(this.VBOs.vertexBuffer[key * this.VERTEX_SIZE + v]);
-                }
-
-                for (var vt = 0; vt < this.VERTEX_TEXTURE_SIZE; vt++) {
-                    surface
-                        .VBOs
-                        .textureBuffer.push(this.VBOs.textureBuffer[key * this.VERTEX_TEXTURE_SIZE + vt]);
-                }
-
-                for (var vn = 0; vn < this.VERTEX_NORMAL_SIZE; vn++) {
-                    surface
-                        .VBOs
-                        .normalBuffer.push(this.VBOs.normalBuffer[key * this.VERTEX_NORMAL_SIZE + vn]);
-                }
-
-                new_i++;
-
-            } else {
-                surface.VBOs.vertexIndicesBuffer.push(keys[key]);
-            }
-
-        }
-
-        surfaces.push(surface);
-    }
-
-    if (remain) {
-
-        var surface = new Surface(this.name);
-        var keys = {};
-
-        var new_i = 0;
-
-        for (var j = length - remain; j < length; j++) {
-
-
-            var key = this.VBOs.vertexIndicesBuffer[j];
-
-
-            if (!(key in keys)) {
-
-                keys[key] = new_i;
-
-                surface.VBOs.vertexIndicesBuffer.push(new_i);
-
-                for (var v = 0; v < this.VERTEX_SIZE; v++) {
-                    surface
-                        .VBOs
-                        .vertexBuffer.push(this.VBOs.vertexBuffer[key * this.VERTEX_SIZE + v]);
-                }
-
-                for (var vt = 0; vt < this.VERTEX_TEXTURE_SIZE; vt++) {
-                    surface
-                        .VBOs
-                        .textureBuffer.push(this.VBOs.textureBuffer[key * this.VERTEX_TEXTURE_SIZE + vt]);
-                }
-
-                for (var vn = 0; vn < this.VERTEX_NORMAL_SIZE; vn++) {
-                    surface
-                        .VBOs
-                        .normalBuffer.push(this.VBOs.normalBuffer[key * this.VERTEX_NORMAL_SIZE + vn]);
-                }
-
-                new_i++;
-
-            } else {
-                surface.VBOs.vertexIndicesBuffer.push(keys[key]);
-            }
-
-        }
-
-        surfaces.push(surface);
-    }
-
-    return surfaces;
-}
-
-Surface.prototype.validate = function() {
-
-    if (this.MAX_INDICES < this.VBOs.vertexBuffer.length) {
-        return this.split();
-    } else {
-        return [this];
-    }
-}
 
 Surface.prototype.getVerticesNormal = function(a) {
     this.faces.push(a);

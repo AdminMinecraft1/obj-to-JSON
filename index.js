@@ -62,7 +62,6 @@ var main = function (src) {
         })
 
         mesh.initVBOs();
-        mesh.validate();
 
 
         mesh.file_name = name + '.json';
