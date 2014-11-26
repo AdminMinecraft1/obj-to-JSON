@@ -22,6 +22,34 @@ String.prototype.isMaterial = function () {
     return this.indexOf('usemtl ') === 0;
 }
 
+String.prototype.isMaterialFile = function () {
+    return this.indexOf('mtllib ') === 0;
+}
+
+String.prototype.isNewMaterial = function () {
+    return this.indexOf('newmtl ') === 0;
+}
+
+String.prototype.isKa = function () {
+    return this.indexOf('Ka ') === 0;
+}
+
+String.prototype.isKd = function () {
+    return this.indexOf('Kd ') === 0;
+}
+
+String.prototype.isKs = function () {
+    return this.indexOf('Ks ') === 0;
+}
+
+String.prototype.isNs = function () {
+    return this.indexOf('newmtl ') === 0;
+}
+
+String.prototype.isNi = function () {
+    return this.indexOf('newmtl ') === 0;
+}
+
 Array.prototype.last = function () {
     return this[this.length - 1];
 }

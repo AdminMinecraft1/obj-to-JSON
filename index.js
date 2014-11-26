@@ -17,11 +17,11 @@ var main = function (src) {
         var lines = data.toString().split(/\n/);
 
 
-        var last = function (a) {
-            return a[a.length - 1];
-        };
-
         lines.map(function (line, i) {
+
+            if (line.isMaterialFile()) {
+                mesh._mtllib = line.split(/mtllib\s/)[1];
+            }
 
 
             if (line.isObject()) {
@@ -61,19 +61,57 @@ var main = function (src) {
             }
         })
 
-        mesh.initVBOs();
+        fs.readFile(src.replace(path, '') + '/' + mesh._mtllib, function (error, data) {
+
+            var lines = data.toString().split(/\n/);
+
+            lines.map(function (line, i) {
+
+                if (line.isNewMaterial()) {
+                    mesh.addMaterial(line.split(/newmtl\s/)[1]);
+                }
+
+                if (line.isKa()) {
+                    mesh.materials.last().setKa(line.split(/Ka\s/)[1]);
+                }
+
+                if (line.isKd()) {
+                    mesh.materials.last().setKd(line.split(/Kd\s/)[1]);
+                }
+
+                if (line.isKs()) {
+                    mesh.materials.last().setKs(line.split(/Ks\s/)[1]);
+                }
+
+                if (line.isNi()) {
+                    mesh.materials.last().setNi(line.split(/Ni\s/)[1]);
+                }
+
+                if (line.isNs()) {
+                    mesh.materials.last().setNs(line.split(/Ns\s/)[1]);
+                }
+
+            });
+
+            mesh.initMaterials();
+            mesh.initVBOs();
 
 
-        mesh.file_name = name + '.json';
-        mesh.src = src.replace(path, '') + '/' + name + '.json';
+            mesh.file_name = name + '.json';
+            mesh.src = src.replace(path, '') + '/' + name + '.json';
 
 
-        fs.writeFile(mesh.src, JSON.stringify(mesh), function () {
-        });
+            fs.writeFile(mesh.src, JSON.stringify(mesh), function () {
+            });
 
-        console.log('Mesh exported to ' + mesh.src);
+            console.log('Mesh exported to ' + mesh.src);
+
+        })
 
     });
+
+
+
 
 
 }
