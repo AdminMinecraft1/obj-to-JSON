@@ -43,11 +43,15 @@ String.prototype.isKs = function () {
 }
 
 String.prototype.isNs = function () {
-    return this.indexOf('newmtl ') === 0;
+    return this.indexOf('Ns ') === 0;
 }
 
 String.prototype.isNi = function () {
-    return this.indexOf('newmtl ') === 0;
+    return this.indexOf('Ni ') === 0;
+}
+
+String.prototype.isd = function () {
+    return this.indexOf('d ') === 0;
 }
 
 Array.prototype.last = function () {

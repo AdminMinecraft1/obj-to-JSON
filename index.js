@@ -91,6 +91,10 @@ var main = function (src) {
                     mesh.materials.last().setNs(line.split(/Ns\s/)[1]);
                 }
 
+                if (line.isd()) {
+                    mesh.materials.last().setd(line.split(/d\s/)[1]);
+                }
+
             });
 
             mesh.initMaterials();

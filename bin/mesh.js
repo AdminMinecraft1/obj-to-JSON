@@ -53,7 +53,7 @@ Mesh.prototype.addSurface = function (name) {
 
 Mesh.prototype.addFace = function (a) {
     if ((this.surfaces.last().faces.length / 3) >= this.surfaces.last().MAX_INDICES) {
-        this.addSurface(new Surface(this.surfaces.last().name));
+        this.addSurface(this.surfaces.last().name);
     }
     this.surfaces.last().addFace(a);
 }
