@@ -1,11 +1,11 @@
 <h1>OBJ to JSON Exporter</h1>
 
 <h4>First question "Man WhaT A... Why i need this?"</h4>
-    <h4>My answer you don't. But. If you want make you life EASE you could try!</h4>
+    <h4>My answer you don't. But. If you want make you life EASY you could try!</h4>
 
 <h2>So whats next?</h2>
 
-You like may WebGL or don't), yours developer way to faces with 3D models;
+If you like WebGL, your way as developer to faces with 3D models;
 
 So -> you need some model, in -> some file format;
 
